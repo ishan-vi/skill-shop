@@ -2,15 +2,9 @@
 
 require "../db/connection.php";
 
-$code = $_POST["code"] ?? '';
 $password = $_POST["password"] ?? '';
-$cpassword = $_POST["confirm_password"] ?? '';
+$cpassword = $_POST["cpassword"] ?? '';
 $email = $_POST["email"] ?? '';
-
-if(empty($code)){
-    echo "Verification code is required.";
-    exit;
-}
 
 if(empty($password) || empty($cpassword)){
     echo "Password fields are required.";
@@ -64,12 +58,6 @@ $tokenData = $tokenResult->fetch_assoc();
 /* Check expiry */
 if(strtotime($tokenData["expiry"]) < time()){
     echo "Verification code expired.";
-    exit;
-}
-
-/* Verify code */
-if(!password_verify($code, $tokenData["token_hash"])){
-    echo "Invalid verification code.";
     exit;
 }
 

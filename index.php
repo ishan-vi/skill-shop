@@ -299,12 +299,14 @@
                     </div>
                     <div id="forgot-message" class="hidden mb-4 p-3 rounded-lg text-sm"></div>
                     <div class="flex gap-3">
-                      <button type="button" onclick="verifyCode();" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700">
+                      <button type="button" id="verify-btn" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700">
                         Verify
                       </button>
                       <button type="button" onclick="backToEmail();" class="flex-1 text-gray-700 bg-gray-300 font-semibold py-2 rounded-lg hover:bg-gray-400">Back</button>
                     </div>
+                    <div id="verify-message"></div>
                 </div>
+
                 <!-- step 3 Reset password -->
                  <div class="hidden p-6" id="forgot-step-3">
                   <p class="text-gray-600 mb-4">Enter your new password</p>
@@ -317,12 +319,12 @@
                   <div class="mb-4">
                         <label for="reset-password-confirm" class="block text-gray-700 text-sm font-semibold mb-2">Confirm
                             Password</label>
-                        <input type="password" name="" id="reset-password" placeholder="●●●●●●●●●●"
+                        <input type="password" name="" id="reset-password-confirm" placeholder="●●●●●●●●●●"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                   </div>
                   <div id="reset-message" class="hidden mb-4 p-3 rounded-lg text-sm"></div>
                   <div class="flex gap-3">
-                        <button type="button" onclick="forgotPassword();"
+                        <button type="button" id="rese-btn"
                             class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700">
                             Reset Password
                         </button>
