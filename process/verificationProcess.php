@@ -1,5 +1,3 @@
-<?php
-
 require "../db/connection.php";
 $email = $_POST["email"];
 $action = $_POST["action"];
@@ -70,5 +68,3 @@ if ($action == "verify") {
 } else {
     echo " Invalid action";
 }
-
-?>
