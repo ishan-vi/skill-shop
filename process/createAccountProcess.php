@@ -27,7 +27,7 @@
     }else if(strlen($password) <8 || strlen($password) > 20){
         echo "Password length should be between 8 and 20.";
     }else if(!$termsConditions){
-        echo "Please read and check I agree to the Terms & Conditions";
+        echo "Please read and check I agre to the Terms & Conditions";
     }else if(empty($accountType)){
         echo "Please select account type.";
     }else{
