@@ -16,8 +16,8 @@ if($password !== $cpassword){
     exit;
 }
 
-if(strlen($password) < 6){
-    echo "Password must be at least 6 characters.";
+if(strlen($password) < 8){
+    echo "Password must be at least 8 characters.";
     exit;
 }
 

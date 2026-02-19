@@ -181,8 +181,6 @@ verifyBtn.addEventListener("click", function () {
 
   msg.classList.remove("hidden");
 
-  alert(email);
-
   if (code.length !== 6 || !/^\d+$/.test(code)) {
     msg.className = "mb-4 p-3 rounded-lg text-sm text-red-500";
     msg.innerHTML = "Enter exactly 6 digits!";

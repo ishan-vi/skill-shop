@@ -42,17 +42,13 @@
                         [$user["id"],$tokenHash,$expiry]
                     );
 
-                    //Set secure cookies with remember token
-                    setcookie("skillshop_remember",$rememberToken,strtotime("+30 days"),"/");
-                    setcookie("skillshop_user_id",$user["id"],strtotime("+30 days"),"/");
-                    setcookie("skillshop_user_email",$email,strtotime("+30 days"),"/");
-                    // setcookie("skillshop_user_password",$password,strtotime("+30 days"),"/");
+                    setcookie("skillshop_remember", $rememberToken, time() + (86400 * 30), "/", "", false, true);
+                    setcookie("skillshop_user_email", $email, time() + (86400 * 30), "/", "", false, true);
 
                 }else{
-                    setcookie("skillshop_remember","",time() - 3600,"/");
-                    setcookie("skillshop_user_id","",time() - 3600,"/");
-                    setcookie("skillshop_user_email","",time() - 3600,"/");
-                    // setcookie("skillshop_user_password","",time() - 3600,"/");
+
+                    setcookie("skillshop_remember", "", time() - 3600, "/");
+                    setcookie("skillshop_user_email", "", time() - 3600, "/");
                 }
                 echo "success";
 
