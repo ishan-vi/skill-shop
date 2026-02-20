@@ -16,7 +16,7 @@ class EmailHelper {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';      // Configure as needed
             $mail->SMTPAuth = true;
-            $mail->Username = 'harshanasandaru65@gmail.com';                 // Add your email
+            $mail->Username = 'harshanasandaru@gmail.com';                 // Add your email
             $mail->Password = 'jpicxblaiefhyhmx';                 // Add your password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
