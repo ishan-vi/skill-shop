@@ -7,25 +7,27 @@ require "Exception.php";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class EmailHelper {
-    
-    // Send password reset code
-    public static function sendResetCode($email, $name, $code) {
+class EmailHelper
+{
+
+    // Send password reset code    cpue kcjz opgx eewg
+    public static function sendResetCode($email, $name, $code)
+    {
         try {
             $mail = new PHPMailer();
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';      // Configure as needed
             $mail->SMTPAuth = true;
-            $mail->Username = 'harshanasandaru@gmail.com';                 // Add your email
-            $mail->Password = 'jpicxblaiefhyhmx';                 // Add your password
+            $mail->Username = 'rebekadevaprasadini1027@gmail.com';                 // Add your email
+            $mail->Password = 'wxigihvisvyjvnar';                 // Add your password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
-            
+
             $mail->setFrom('noreply@skillshop.com', 'SkillShop');
             $mail->addAddress($email);
             $mail->isHTML(true);
             $mail->Subject = 'Your SkillShop Password Reset Code';
-            
+
             $html = "
                 <html>
                 <body style='font-family:Arial;'>
@@ -43,15 +45,20 @@ class EmailHelper {
                 </body>
                 </html>
             ";
-            
+
             $mail->Body = $html;
-            
-            return $mail->send();
-            
+
+            // Send via SMTP
+            if ($mail->send()) {
+                error_log("Email sent to $email");
+                return true;
+            } else {
+                error_log("Email failed: " . $mail->ErrorInfo);
+                return false;
+            }
         } catch (Exception $e) {
             error_log("Email error: " . $e->getMessage());
             return false;
         }
     }
 }
-?>

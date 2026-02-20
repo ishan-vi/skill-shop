@@ -4,10 +4,12 @@ function createAccount() {
   var email = document.getElementById("signup-email").value;
   var password = document.getElementById("signup-password").value;
   var cpassword = document.getElementById("signup-confirm").value;
+
   var accountTypeSeller = document.getElementById("account_type_seller");
   var accountTypeBuyer = document.getElementById("account_type_buyer");
   var termsCondition = document.getElementById("terms_condition");
   var signupErrorMessage = document.getElementById("signup-message");
+
   signupErrorMessage.classList.remove("hidden");
 
   if (!fname || !lname || !email || !password || !cpassword) {
@@ -15,12 +17,12 @@ function createAccount() {
   } else if (password.length < 8) {
     signupErrorMessage.innerHTML = "Password must be at least 8 characters";
   } else if (password != cpassword) {
-    signupErrorMessage.innerHTML = "Password must be same";
+    signupErrorMessage.innerHTML = "Password do not match";
   } else if (!accountTypeSeller.checked && !accountTypeBuyer.checked) {
     signupErrorMessage.innerHTML = "Please select account type";
   } else if (!termsCondition.checked) {
     signupErrorMessage.innerHTML =
-      "Please read and check I agree to the terms & condition";
+      "Please read and agree to the Terms & Conditions";
   } else {
     signupErrorMessage.classList.add("hidden");
 
@@ -34,35 +36,39 @@ function createAccount() {
       "account_type",
       accountTypeSeller.checked
         ? accountTypeSeller.value
-        : accountTypeBuyer.value,
+        : accountTypeSeller.value,
     );
-    form.append("termsConditions", termsCondition.checked);
+    form.append("termsCondition", termsCondition.checked);
 
     var r = new XMLHttpRequest();
 
     r.onreadystatechange = function () {
       if (r.readyState == 4) {
         signupErrorMessage.classList.remove("hidden");
+
         if (r.status == 200) {
           if (r.responseText == "success") {
             signupErrorMessage.classList.remove("text-red-500");
             signupErrorMessage.classList.add("text-green-500");
-            signupErrorMessage.innerHTML = "Registration Successfull";
+            signupErrorMessage.innerHTML = "Registration Successfull!";
+
             setTimeout(() => {
               window.location.reload();
             }, 2000);
           } else {
             signupErrorMessage.innerHTML = r.responseText;
           }
+        } else {
+          signupErrorMessage.innerHTML = "Request fail :" + r.responseText;
         }
-      } else {
-        ((signupErrorMessage.innerHTML = "Request failed!"), r.responseText);
       }
     };
+
     r.open("POST", "process/createAccountProcess.php", true);
     r.send(form);
   }
 }
+
 //signIn , remember me
 function signIn() {
   // alert("signin");
@@ -125,90 +131,92 @@ function forgotPassword() {
   var sendBtn = document.getElementById("forgot-password-send-code-btn");
 
   if (!email || !validateEmail(email)) {
-    msg.className = "text-red-500 text-sm rounded-lg text-center text-bold mb-2 p-2";
+    msg.className = "text-red-500 text-sm rounded-lg mb-2 p-2";
     msg.innerHtML = "Invalid Email";
   } else {
     var form = new FormData();
     form.append("email", email);
 
     msg.classname = "text-blue-500 text-sm rounded-lg mb-2 p-2";
-    msg.innerHTML = "Sending... <span class = 'inline-block animate-spin'>⌛</span>";
+    msg.innerHTML =
+      "Sending... <span class = 'inline-block animate-spin'>⌛</span>";
     sendBtn.disabled = true;
     sendBtn.style.opacity = "0.6";
 
     var r = new XMLHttpRequest();
 
-    r.open("POST", "./process/forgotPasswordProcess.php", true);
+    r.open("POST", "process/forgotPasswordProcess.php", true);
     r.onload = () => {
       sendBtn.disabled = false;
       sendBtn.style.opacity = "1";
-      var response = r.responseText.trim();
+      var response = r.responseText;
       msg.classList.remove("hidden");
-      msg.className = "text-sm rounded-lg mb-2 p-2 " + (response == "success" ? "text-green-500" : "text-red-500");
-      msg.innerHTML = response == "success" ? "✓Code sent to your email!" : response;
-      if (response == "success") {
-        msg.className = "text-green-500 text-sm rounded-lg mb-2 p-2";
-        msg.innerHTML = "Code sent";
-
-        setTimeout(function () {
+      msg.className =
+        "text-sm rounded-lg mb-2 p-2 " +
+        (response == "success" ? "text-green-500" : "text-red-500");
+      msg.innerHTML =
+        response == "success" ? "Code sent to your email!" : response;
+      if (response == "success")
+        setTimeout(() => {
           document.getElementById("forgot-step-1").classList.add("hidden");
           document.getElementById("forgot-step-2").classList.remove("hidden");
           document.getElementById("verify-message").classList.add("hidden");
         }, 1500);
-      } else {
-        msg.className = "text-red-500 text-sm rounded-lg mb-2 p-2";
-        msg.innerHTML = response;
-      }
     };
     r.onerror = () => {
       sendBtn.disabled = false;
       sendBtn.style.opacity = "1";
       msg.classList.remove("hidden");
       msg.className = "text-red-500 text-sm rounded-lg mb-2 p-2";
-      msg.innerHTML = "Network error. Please try again."
+      msg.innerHTML = "Network error. Please try again.";
     };
     r.send(form);
   }
 }
 
 // Verify Code
-let verifyBtn = document.getElementById("verify-btn")
-
-verifyBtn.addEventListener("click", function () {
-  let code = document.getElementById("verify-code").value;
-  let email = document.getElementById("forgot-email").value;
-  let msg = document.getElementById("verify-message");
+function verifyCode() {
+  var code = document.getElementById("verify-code").value;
+  var email = document.getElementById("forgot-email").value;
+  var msg = document.getElementById("verify-message");
+  var verifyBtn = document.getElementById("forgot-password-verify-code-btn");
 
   msg.classList.remove("hidden");
 
-  if (code.length !== 6 || !/^\d+$/.test(code)) {
+  var regex = /^\d+$/;
+
+  if (code.length !== 6 || !regex.test(code)) {
     msg.className = "mb-4 p-3 rounded-lg text-sm text-red-500";
     msg.innerHTML = "Enter exactly 6 digits!";
   } else {
     msg.className = "mb-4 p-3 rounded-lg text-sm text-blue-500";
-    msg.innerHTML = "Verifying... <span class='inline-block animate-spin'>⏳</span>";
+    msg.innerHTML =
+      "Verifying... <span class='inline-block animate-spin'>⏳</span>";
     verifyBtn.disabled = true;
     verifyBtn.style.opacity = "0.6";
 
-    let form = new FormData();
+    var form = new FormData();
     form.append("email", email);
     form.append("code", code);
     form.append("action", "verify");
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "./process/verificationProcess.php", true);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "process/resetPasswordProcess.php", true);
     xhr.onload = () => {
       verifyBtn.disabled = false;
       verifyBtn.style.opacity = "1";
-      let response = xhr.responseText.trim();
+      var response = xhr.responseText.trim();
       msg.classList.remove("hidden");
-      msg.className = "mb-4 p-3 rounded-lg text-sm " + (response == "success" ? "text-green-500" : "text-red-500");
-      msg.innerHTML = response == "success" ? "Code verified!" : response;
-      if (response == "success") setTimeout(() => {
-        document.getElementById("forgot-step-2").classList.add("hidden");
-        document.getElementById("forgot-step-3").classList.remove("hidden");
-        document.getElementById("reset-message").classList.add("hidden");
-      }, 1500);
+      msg.className =
+        "mb-4 p-3 rounded-lg text-sm " +
+        (response == "success" ? "text-green-500" : "text-red-500");
+      msg.innerHTML = response == "success" ? "✓ Code verified!" : response;
+      if (response == "success")
+        setTimeout(() => {
+          document.getElementById("forgot-step-2").classList.add("hidden");
+          document.getElementById("forgot-step-3").classList.remove("hidden");
+          document.getElementById("reset-message").classList.add("hidden");
+        }, 1500);
     };
     xhr.onerror = () => {
       verifyBtn.disabled = false;
@@ -219,15 +227,15 @@ verifyBtn.addEventListener("click", function () {
     };
     xhr.send(form);
   }
-})
+}
 
 // Reset Password
-let resetBtn = document.getElementById("rese-btn");
-resetBtn.addEventListener("click", function () {
-  let pwd = document.getElementById("reset-password").value;
-  let confirm = document.getElementById("reset-password-confirm").value;
-  let email = document.getElementById("forgot-email").value;
-  let msg = document.getElementById("reset-message");
+function resetPassword() {
+  var pwd = document.getElementById("reset-password").value;
+  var confirm = document.getElementById("reset-password-confirm").value;
+  var email = document.getElementById("forgot-email").value;
+  var msg = document.getElementById("reset-message");
+  var resetBtn = document.getElementById("forgot-password-reset-password-btn");
 
   msg.classList.remove("hidden");
 
@@ -242,30 +250,35 @@ resetBtn.addEventListener("click", function () {
     msg.innerHTML = "Passwords don't match!";
   } else {
     msg.className = "mb-4 p-3 rounded-lg text-sm text-blue-500";
-    msg.innerHTML = "Resetting... <span class='inline-block animate-spin'>⏳</span>";
+    msg.innerHTML =
+      "Resetting... <span class='inline-block animate-spin'>⏳</span>";
     resetBtn.disabled = true;
     resetBtn.style.opacity = "0.6";
 
-    let form = new FormData();
+    var form = new FormData();
     form.append("email", email);
     form.append("password", pwd);
     form.append("cpassword", confirm);
     form.append("action", "reset");
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "./process/resetPasswordProcess.php", true);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "process/resetPasswordProcess.php", true);
     xhr.onload = () => {
       resetBtn.disabled = false;
       resetBtn.style.opacity = "1";
-      let response = xhr.responseText.trim();
+      var response = xhr.responseText.trim();
       msg.classList.remove("hidden");
-      msg.className = "mb-4 p-3 rounded-lg text-sm " + (response == "success" ? "text-green-500" : "text-red-500");
-      msg.innerHTML = response == "success" ? "✓ Password reset successfully!" : response;
-      if (response == "success") setTimeout(() => {
-        closeForgotPasswordModal();
-        document.getElementById("reset-password").value = "";
-        document.getElementById("reset-password-confirm").value = "";
-      }, 2000);
+      msg.className =
+        "mb-4 p-3 rounded-lg text-sm " +
+        (response == "success" ? "text-green-500" : "text-red-500");
+      msg.innerHTML =
+        response == "success" ? "✓ Password reset successfully!" : response;
+      if (response == "success")
+        setTimeout(() => {
+          closeForgotPasswordModal();
+          document.getElementById("reset-password").value = "";
+          document.getElementById("reset-password-confirm").value = "";
+        }, 2000);
     };
     xhr.onerror = () => {
       resetBtn.disabled = false;
@@ -276,7 +289,7 @@ resetBtn.addEventListener("click", function () {
     };
     xhr.send(form);
   }
-})
+}
 
 function openForgotPasswordModal() {
   document.getElementById("forgot-password-modal").classList.remove("hidden");

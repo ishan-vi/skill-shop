@@ -1,9 +1,8 @@
-:root{
-    --primary-color:#2563eb;
-    --primary-dark:#1d4ed8;
-    --secondry-color:#4f46e5;
-    --success-color:#10b981;
-    --danger-color:#ef4444;
-    --warning-color:#f56e0b;
-
+:root {
+  --primary-color: rgb(56, 142, 223);
+  --primary-dark: rgb(32, 108, 180);
+  --secondry-color: rgb(87, 58, 255);
+  --success-color: rgb(40, 218, 129);
+  --danger-color: rgb(218, 64, 64);
+  --warning-color: rgb(231, 169, 36);
 }

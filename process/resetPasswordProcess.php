@@ -1,80 +1,82 @@
 <?php
-
 require "../db/connection.php";
 
-$password = $_POST["password"] ?? '';
-$cpassword = $_POST["cpassword"] ?? '';
-$email = $_POST["email"] ?? '';
+$email = $_POST["email"];
+$action = $_POST["action"];
 
-if(empty($password) || empty($cpassword)){
-    echo "Password fields are required.";
-    exit;
+if ($action == "verify") {
+
+    $code = $_POST["code"];
+
+    if (empty($code)) {
+        echo "Verification code is required.";
+    } else {
+        $result = Database::search("SELECT `id` FROM `user` WHERE `email`=?", "s", [$email]);
+
+        if (!$result && $result->num_rows == 0) {
+            echo "User not found";
+        } else {
+            $user = $result->fetch_assoc();
+
+            $codeResult = Database::search(
+                "SELECT `token_hash`,`expiry` FROM `password_reset_tokens` WHERE `user_id`=? ORDER BY `created_at` DESC LIMIT 1",
+                "i",
+                [$user["id"]]
+            );
+
+            if (!$codeResult || $codeResult->num_rows == 0) {
+                echo "No code requested";
+            } else {
+                $codeRecord = $codeResult->fetch_assoc();
+                $expiry = strtotime($codeRecord["expiry"]);
+                $now = time();
+
+                if ($now > $expiry) {
+                    echo "Code expired";
+                } else if (password_verify($code, $codeRecord["token_hash"])) {
+                    echo "success";
+                } else {
+                    echo "Invalide code";
+                }
+            }
+        }
+    }
+
+} else if ($action == "reset") {
+
+    $password = $_POST["password"];
+    $cpassword = $_POST["cpassword"];
+
+    if (empty($password)) {
+        echo "Plese enter youre password";
+    } else if ($password != $cpassword) {
+        echo "Password do not match";
+    } else if (strlen($password) < 8) {
+        echo "Password must be 8 characters";
+    } else {
+        $result = Database::search("SELECT `id` FROM `user` WHERE `email`=?", "s", [$email]);
+
+
+        if ($result || $result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            Database::iud(
+                "UPDATE `user` SET `password_hash`=? WHERE `id`=?",
+                "si",
+                [password_hash($password, PASSWORD_DEFAULT), $user["id"]]
+            );
+
+            Database::iud(
+                "DELETE FROM `password_reset_tokens` WHERE `user_id`=?",
+                "i",
+                [$user["id"]]
+            );
+            echo "success";
+        } else {
+            echo "User not found";
+        }
+    }
+
+} else {
+    echo "Invalid action";
 }
-
-if($password !== $cpassword){
-    echo "Passwords do not match.";
-    exit;
-}
-
-if(strlen($password) < 8){
-    echo "Password must be at least 8 characters.";
-    exit;
-}
-
-if(empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)){
-    echo "Invalid email address.";
-    exit;
-}
-
-/* Get user */
-$userResult = Database::search(
-    "SELECT `id` FROM `user` WHERE `email` = ?",
-    "s",
-    [$email]
-);
-
-if(!$userResult || $userResult->num_rows == 0){
-    echo "User not found.";
-    exit;
-}
-
-$user = $userResult->fetch_assoc();
-$userId = $user["id"];
-
-/* Get reset token */
-$tokenResult = Database::search(
-    "SELECT `token_hash`, `expiry` FROM `password_reset_tokens` WHERE `user_id` = ?",
-    "i",
-    [$userId]
-);
-
-if(!$tokenResult || $tokenResult->num_rows == 0){
-    echo "Invalid or expired reset request.";
-    exit;
-}
-
-$tokenData = $tokenResult->fetch_assoc();
-
-/* Check expiry */
-if(strtotime($tokenData["expiry"]) < time()){
-    echo "Verification code expired.";
-    exit;
-}
-
-/* Update new password */
-$newPasswordHash = password_hash($password, PASSWORD_DEFAULT);
-
-Database::iud(
-    "UPDATE `user` SET `password_hash` = ? WHERE `id` = ?",
-    "si",
-    [$newPasswordHash, $userId]
-);
-
-/* Delete used token */
-Database::iud(
-    "DELETE FROM `password_reset_tokens` WHERE `user_id` = ?",
-    "i",
-    [$userId]
-);
-
-echo "success";
