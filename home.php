@@ -2,13 +2,6 @@
 
 if (isset($_SESSION["user_email"])) {
     $userRole = $_SESSION["active_account_type"];
-    if ($userRole == "buyer") {
-        header("Location: buyer-dashboard.php");
-        exit();
-    } else if ($userRole == "seller") {
-        header("Location: seller-dashboard.php");
-        exit();
-    }
 } else {
     header("Location: index.php");
 }

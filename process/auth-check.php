@@ -6,8 +6,8 @@ if (!isset($_SESSION)) {
 require_once __DIR__ . "/../db/connection.php";
 
 if (isset($_COOKIE["skillshop_remember"]) && isset($_COOKIE["skillshop_user_id"])) {
-    $rememberToken = $_COOKIE("skillshop_remember");
-    $userId = intval($_COOKIE("skillshop_user_id"));
+    $rememberToken = $_COOKIE["skillshop_remember"];
+    $userId = intval($_COOKIE["skillshop_user_id"]);
 
     $tokenResult = Database::search(
         "SELECT `token_hash` FROM `remember_tokens` WHERE `user_id`=? AND `expiry` > NOW() ORDER BY `created_at` DESC LIMIT 1",
