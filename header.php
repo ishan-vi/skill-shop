@@ -3,12 +3,9 @@
 session_start();
 require "./db/connection.php";
 
-
-if (isset($_SESSION["logged_in"]) || $_SESSION["logged_in"] != true) {
-    require_once "./process/auth-check.php";
-
+if(!isset($_SESSION["logged_in"]) || $_SESSION["logged_in"] != true){
+    require_once "process/auth-check.php";
 }
-
 
 $loggedIn = isset($_SESSION["logged_in"]) ? $_SESSION["logged_in"] : false;
 $userName = isset($_SESSION["user_name"]) ? $_SESSION["user_name"] : "";
@@ -22,9 +19,9 @@ $userRole = isset($_SESSION["active_account_type"]) ? $_SESSION["active_account_
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skillshop - buy and sell skils</title>
+    <title>Skillshop - Buy and Sell Skills</title>
+    <link rel="icon" type="images/jpeg" href="assets/images/image.jpg" />
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="assets/images/waleron-high-resolution-logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
