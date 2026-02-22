@@ -9,32 +9,32 @@ $productResult = Database::search("SELECT
                                    u.`fname`,
                                    COUNT(f.`id`) AS `review_count`,
                                    COALESCE(AVG(f.`rating`),0) AS `avg_rating`
-FROM `product` p JOIN `user` u ON p.`seller_id` = i.`id`
-   LEFT JOIN `feedback` f ON p.`id`=f.`product_id` GROUP BY p.`id` LIMIT 6");
-
+                                   FROM `product` p 
+                                   JOIN `user` u ON p.`seller_id` = u.`id`
+                                   LEFT JOIN `feedback` f ON p.`id` = f.`product_id` 
+                                   GROUP BY p.`id` 
+                                   LIMIT 6");
 
 $products = [];
 if ($productResult && $productResult->num_rows > 0) {
     while ($product = $productResult->fetch_assoc()) {
         $products[] = $product;
     }
-
 }
+
 // GET Featured testimonials from feedback table
-$testimonialResult = Database::search(
-    "SELECT
-            f.`rating`,
-            f.`message`,
-            u.`fname`,
-            u.`lname`,
-            u.`id`,
-            up.`avatar_url`
-            FROM `feedback` f
-            JOIN `user` u ON f.`user_id` = u.`id`
-            LEFT JOIN `user_profile` up ON  u.`id` = up. `user_id`
-         WHERE f.`is_featured`=1
-         LIMIT 3"
-);
+$testimonialResult = Database::search("SELECT
+                                       f.`rating`,
+                                       f.`message`,
+                                       u.`fname`,
+                                       u.`lname`,
+                                       u.`id`,
+                                       up.`avatar_url`
+                                       FROM `feedback` f
+                                       JOIN `user` u ON f.`user_id` = u.`id`
+                                       LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
+                                       WHERE f.`is_featured` = 1
+                                       LIMIT 3");
 
 $testimonials = [];
 if ($testimonialResult && $testimonialResult->num_rows > 0) {
@@ -44,10 +44,10 @@ if ($testimonialResult && $testimonialResult->num_rows > 0) {
 }
 
 // GET platform statistics
-$usersResult = Database::search("SELECT COUNT(DISTINCT `id`)AS `total_users` FROM `user`;");
-$productsCountResult = Database::search("SELECT COUNT(`id`)AS `total_products` FROM `product`;");
-$feedbackStatusResult = Database::search("SELECT AVG(`rating`) AS `avg_rating` FROM `feedback`;");
-$ordersStatusResult = Database::search("SELECT COUNT(`id`) AS `total_orders`,SUM(`total_amount`)AS `total_revenue`FROM `order`;");
+$usersResult = Database::search("SELECT COUNT(DISTINCT `id`) AS `total_users` FROM `user`");
+$productsCountResult = Database::search("SELECT COUNT(`id`) AS `total_products` FROM `product`");
+$feedbackStatusResult = Database::search("SELECT AVG(`rating`) AS `avg_rating` FROM `feedback`");
+$ordersStatusResult = Database::search("SELECT COUNT(`id`) AS `total_orders`, SUM(`total_amount`) AS `total_revenue` FROM `orders`");
 
 $totalUsers = ($usersResult && $row = $usersResult->fetch_assoc()) ? $row["total_users"] : 0;
 $totalProducts = ($productsCountResult && $row = $productsCountResult->fetch_assoc()) ? $row["total_products"] : 0;
