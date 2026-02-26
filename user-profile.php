@@ -281,6 +281,19 @@ countrySelect.addEventListener("change",function(){
 
 
 function uploadImage(file) {
+
+<?php
+$checkProfile = Database::search(
+    "SELECT `user_id` FROM `user_profile` WHERE `user_id` = ?",
+    "i",
+    [$userId]
+);
+
+if ($checkProfile && $checkProfile->num_rows > 0) {
+    $row = $checkProfile->fetch_assoc();
+    $userId = $row["user_id"];
+?>
+
     const formData = new FormData();
     formData.append("avatarFile", file);
     
@@ -302,6 +315,16 @@ function uploadImage(file) {
         alert("Error uploading image");
         avatarPreview.src = "<?php echo $avatarUrl; ?>";
     });
+
+    <?php
+
+} else {
+   ?>
+    alert("User profile not found. Please save your profile information first.");
+    avatarPreview.src = "<?php echo $avatarUrl; ?>";
+   <?php
+}
+    ?>
 }
 
 

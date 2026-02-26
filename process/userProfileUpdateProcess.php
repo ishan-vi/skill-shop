@@ -87,9 +87,9 @@ if(empty($fname)){
             }
             //Update existing profile
             $updateProfile = Database::iud(
-                "UPDATE `user_profile` SET `avatar_url` = ?, `bio` = ?, `gender_id` = ?, `mobile` = ?, `address_id` = ? WHERE `user_id` = ?",
+                "UPDATE `user_profile` SET `bio` = ?, `gender_id` = ?, `mobile` = ?, `address_id` = ? WHERE `user_id` = ?",
                 "ssisii",
-                [$avatarUrl, $bio, $genderId, $mobile, $userAddressId, $userId]
+                [$bio, $genderId, $mobile, $userAddressId, $userId]
             );
             if(!$updateProfile){
                 throw new Exception("Failed to update profile information!");
@@ -113,9 +113,9 @@ if(empty($fname)){
             }
             // Insert new user profile
             $insertProfile = Database::iud(
-                "INSERT INTO `user_profile` (`user_id`, `avatar_url`, `bio`, `gender_id`, `mobile`, `address_id`) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO `user_profile` (`user_id`, `bio`, `gender_id`, `mobile`, `address_id`) VALUES (?, ?, ?, ?, ?)",
                 "issiii",
-                [$userId, $avatarUrl, $bio, $genderId, $mobile, $addressId]
+                [$userId, $bio, $genderId, $mobile, $addressId]
             );
             if(!$insertProfile){
                 throw new Exception("Failed to create profile information!");
