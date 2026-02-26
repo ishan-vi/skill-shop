@@ -256,11 +256,13 @@ countrySelect.addEventListener("change",function(){
       citySelect.innerHTML = "<option value=''>Select City</option>";
       return;
    }
-   //   Fetch cities fro selected country
+   
+   const formDatas = new FormData();
+   formDatas.append("country_id",countryId);
+
    fetch("process/getCities.php",{
       method:"POST",
-      headers:{"Content-Type" : "application/x-www-form-urlencoded"},
-      body:"country_id" + countryId
+      body:formDatas
    })
    .then(response => response.json())
    .then(data =>{
