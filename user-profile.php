@@ -181,7 +181,7 @@ $profileMsg =  isset($_GET["msg"]) ? $_GET["msg"]:"";
                          </div>
                           <!-- Address Line 2 -->
                          <div>
-                            <label for="line2" class="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
+                            <label for="line2" class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
                             <input type="text" name="line2" id="line2" value="<?php echo $profile ? $profile["line2"] : "";?>" placeholder="Apartment, suite, etc." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
                              <span class="error text-red-500 text-sm hidden"></span>
                          </div>
@@ -243,6 +243,7 @@ $profileMsg =  isset($_GET["msg"]) ? $_GET["msg"]:"";
             avatarUrlInput.value = event.target.result;
          };
          reader.readAsDataURL(file);
+         uploadImage(file);
       }
    });
    //Country change event - load cities
@@ -277,6 +278,33 @@ countrySelect.addEventListener("change",function(){
       }
    }).catch(error => console.error("Error:", error));
 });
+
+
+function uploadImage(file) {
+    const formData = new FormData();
+    formData.append("avatarFile", file);
+    
+    fetch("process/uploadImage.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            avatarUrlInput.value = data.avatarUrl;
+        } else {
+            alert("Error uploading image: " + data.message);
+            avatarPreview.src = "<?php echo $avatarUrl; ?>";
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Error uploading image");
+        avatarPreview.src = "<?php echo $avatarUrl; ?>";
+    });
+}
+
+
 //  Form submission
 const profileForm = document.getElementById("profileForm");
 profileForm.addEventListener("submit",function(e){
