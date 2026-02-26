@@ -53,7 +53,7 @@ if ($testimonialResult && $testimonialResult->num_rows > 0) {
 $usersResult = Database::search("SELECT COUNT(DISTINCT `id`) AS `total_users` FROM `user`");
 $productsCountResult = Database::search("SELECT COUNT(`id`) AS `total_products` FROM `product`");
 $feedbackStatusResult = Database::search("SELECT AVG(`rating`) AS `avg_rating` FROM `feedback`");
-$ordersStatusResult = Database::search("SELECT COUNT(`id`) AS `total_orders`, SUM(`total_amount`) AS `total_revenue` FROM `orders`");
+$ordersStatusResult = Database::search("SELECT COUNT(`id`) AS `total_orders`, SUM(`total_amount`) AS `total_revenue` FROM `order`");
 
 $totalUsers = ($usersResult && $row = $usersResult->fetch_assoc()) ? $row["total_users"] : 0;
 $totalProducts = ($productsCountResult && $row = $productsCountResult->fetch_assoc()) ? $row["total_products"] : 0;
@@ -93,7 +93,7 @@ $totalRevenue = ($ordersStatusResult && $row = $ordersStatusResult->fetch_assoc(
                         <?php if ($userRole == "seller"): ?>
                             <a href="seller-dashboard.php" class="bg-white text-blue-600 px-6 py-3 rounded-lg
                     font-bold hover:shadow-lg inline-block transition-all">Go to Dashboard</a>
-                            <a href="#brows" class="border-2 border-white text-white px-6 py-3 rounded-lg
+                            <a href="product-register.php" class="border-2 border-white text-white px-6 py-3 rounded-lg
                     font-bold hover:bg-white hover:bg-opacity-10 inline-block transition-all">Create Skills</a>
                         <?php endif; ?>
 
